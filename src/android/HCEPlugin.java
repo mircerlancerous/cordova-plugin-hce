@@ -17,6 +17,7 @@ public class HCEPlugin extends CordovaPlugin {
 
     private static final String REGISTER_COMMAND_CALLBACK = "registerCommandCallback";
     private static final String SEND_RESPONSE = "sendResponse";
+    private static final String SEND_HEX_RESPONSE = "sendHexResponse";
     private static final String REGISTER_DEACTIVATED_CALLBACK = "registerDeactivatedCallback";
     private static final String TAG = "HCEPlugin";
 
@@ -44,6 +45,17 @@ public class HCEPlugin extends CordovaPlugin {
             byte[] data = args.getArrayBuffer(0);
 
             if (CordovaApduService.sendResponse(data)) {
+                callbackContext.success();
+            } else {
+                // TODO This message won't make sense to developers.
+                callbackContext.error("Missing Reference to CordovaApduService.");
+            }
+
+        } else if (action.equalsIgnoreCase(SEND_HEX_RESPONSE)) {
+
+            String hexdata = args.get(0).toString();
+
+            if (CordovaApduService.sendHexResponse(hexdata)) {
                 callbackContext.success();
             } else {
                 // TODO This message won't make sense to developers.
