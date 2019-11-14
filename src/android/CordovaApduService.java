@@ -22,11 +22,27 @@ public class CordovaApduService extends HostApduService {
 
     static boolean sendResponse(byte[] data) {
         if (cordovaApduService != null) {
+        	Log.i(TAG, "Sent Response APDU: " + ByteArrayToHexString(data));
             cordovaApduService.sendResponseApdu(data);
             return true;
         } else {
+        	Log.e(TAG, "No reference to cordovaApduService.");
             return false;
         }
+    }
+
+    static boolean sendHexResponse(String hexdata) {
+        if (cordovaApduService == null) {
+        	Log.e(TAG, "No reference to cordovaApduService.");
+            return false;
+        }
+        
+    	Log.i(TAG, "Sent Response APDU A: " + hexdata);
+    	byte[] data = HexStringToByteArray(hexdata);
+    	Log.i(TAG, "Sent Response APDU B: " + ByteArrayToHexString(data));
+    	
+        cordovaApduService.sendResponseApdu(data);
+        return true;
     }
 
     /**
@@ -60,7 +76,7 @@ public class CordovaApduService extends HostApduService {
         } else {
             Log.e(TAG, "No reference to HCE Plugin.");
         }
-
+        
         // return null since JavaScript code will send the response
         return null;
     }
@@ -101,4 +117,26 @@ public class CordovaApduService extends HostApduService {
         return new String(hexChars);
     }
 
+    /**
+     * Utility method to convert a hexadecimal string to a byte string.
+     *
+     * Behavior with input strings containing non-hexadecimal characters is undefined.
+     *
+     * @param s String containing hexadecimal characters to convert
+     * @return Byte array generated from input
+     * @throws java.lang.IllegalArgumentException if input length is incorrect
+     */
+    public static byte[] HexStringToByteArray(String s) throws IllegalArgumentException {
+        int len = s.length();
+        if (len % 2 == 1) {
+            throw new IllegalArgumentException("Hex string must have even number of characters");
+        }
+        byte[] data = new byte[len / 2]; // Allocate 1 byte per 2 hex characters
+        for (int i = 0; i < len; i += 2) {
+            // Convert each character into a integer (base-16), then bit-shift into place
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
+                    + Character.digit(s.charAt(i+1), 16));
+        }
+        return data;
+    }
 }
