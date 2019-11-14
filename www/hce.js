@@ -17,7 +17,14 @@ module.exports = {
     // responseApdu should be a Uint8Array
     // http://developer.android.com/reference/android/nfc/cardemulation/HostApduService.html#sendResponseApdu(byte[])
     sendResponse: function(responseApdu, success, failure) {
+    	console.log("warning: 'hce.sendResponse' is deprecated and will be removed; use 'hce.sendHexResponse' instead.");
         cordova.exec(success, failure, 'HCE', 'sendResponse', [responseApdu]);
+    },
+    
+    // Send a response to the APDU Command
+    // responseApdu should be a hexidecimal string; ie: FF0DA015
+    sendHexResponse: function(responseApdu, success, failure) {
+        cordova.exec(success, failure, 'HCE', 'sendHexResponse', [responseApdu]);
     },
 
     // Register to receive callback when host service is deactivated.
