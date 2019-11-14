@@ -22,7 +22,8 @@ The AID for your application must be passed as a variable when installing the pl
 ## Methods
 
 - [hce.registerCommandCallback](#hceregistercommandcallback)
-- [hce.sendResponse](#hcesendresponse)
+- [hce.sendResponse](#hcesendresponse) (deprecated)
+- [hce.sendHexResponse](#hcesendhexresponse)
 - [hce.registerDeactivatedCallback](#hceregisterdeactivatedcallback)
 
 ## hce.registerCommandCallback
@@ -39,7 +40,7 @@ Register to receive APDU commands from the remote device.
 #### Description
 Function `registerCommandCallback` allows your JavaScript code to handle APDU responses from the NFC reader. Commands will be sent as Uint8Array to the success callback. The success callback is long lived and may be called many times.
 
-Responses are sent back using `hce.sendResponse`. Android recommends "...response APDUs must be sent as quickly as possible, given the fact that the user is likely holding his device over an NFC reader when this method is called." For more info see [HostApduService.processCommandApdu](http://developer.android.com/reference/android/nfc/cardemulation/HostApduService.html#processCommandApdu(byte[], android.os.Bundle)).
+Responses are sent back using `hce.sendHexResponse`. Android recommends "...response APDUs must be sent as quickly as possible, given the fact that the user is likely holding his device over an NFC reader when this method is called." For more info see [HostApduService.processCommandApdu](http://developer.android.com/reference/android/nfc/cardemulation/HostApduService.html#processCommandApdu(byte[], android.os.Bundle)).
 
 #### Quick Example
 
@@ -53,12 +54,12 @@ Responses are sent back using `hce.sendResponse`. Android recommends "...respons
         // do something with the command
 
         // send the response
-        hce.sendReponse(commandResponse);
+        hce.sendHexReponse(commandResponse);
     }
 
 
 ## hce.sendResponse
-Sends a response APDU back to the remote device.
+(deprecated) Sends a response APDU back to the remote device.
 
     hce.sendResponse(responseApdu, success);
 
@@ -69,6 +70,22 @@ Sends a response APDU back to the remote device.
 
 #### Description
 Function `sendResponse` is intended to be called from within the success handler of `hce.registerCommandCallback`. Response commands should be sent a Uint8Array.
+
+See [HostApduService.sendResponseApdu](http://developer.android.com/reference/android/nfc/cardemulation/HostApduService.html#sendResponseApdu(byte[])).
+
+
+## hce.sendHexResponse
+Sends a response APDU back to the remote device.
+
+    hce.sendHexResponse(responseApdu, success);
+
+### Parameters
+- __responseApdu__: Response for tNFC reader; should be a hexidecimal string. ie: "DF01A6"
+- __success__: Success callback function that is invoked when an APDU command arrives.
+- __failure__: Error callback function, invoked when error occurs. [optional]
+
+#### Description
+Function `sendHexResponse` is intended to be called from within the success handler of `hce.registerCommandCallback`. Response commands should be sent as a string of hexidecimal characters (ie: "DF01A6").
 
 See [HostApduService.sendResponseApdu](http://developer.android.com/reference/android/nfc/cardemulation/HostApduService.html#sendResponseApdu(byte[])).
 
